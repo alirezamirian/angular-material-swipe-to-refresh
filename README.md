@@ -3,7 +3,6 @@ Implementation of [material design swipe to refresh](https://material.google.com
 for [Angular Material](https://material.angularjs.org).
 ## Description and docs will be added soon!
 
-g
 
 ## TODO
 - [ ] Add docs

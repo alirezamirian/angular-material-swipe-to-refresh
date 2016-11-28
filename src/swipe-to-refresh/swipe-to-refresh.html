@@ -1,0 +1,18 @@
+<div
+     class="_indicator-wrap" layout="column" layout-align="center center"
+     ng-style="{top: -40 + movement + 'px'}">
+    <span class="md-whiteframe-2dp _indicator" ng-if="state == State.Pulling">
+        <md-progress-circular
+                md-diameter="20" value="{{progress*80}}"
+                ng-style="{transform: 'rotate(' + movement*1.8 + 'deg)', opacity: progress == 1 ? 1 : .4}">
+        </md-progress-circular>
+    </span>
+    <!--
+    We use ng-show because ng-if will destroy md-progress-circular scope and it will no longer spin while it's
+    fading out. It event don't freezes in it's last state.
+    -->
+    <span class="md-whiteframe-2dp _indicator _updating" ng-show="state == State.Updating">
+        <md-progress-circular md-diameter="20" md-mode="indeterminate"></md-progress-circular>
+    </span>
+</div>
+<div ng-transclude></div>

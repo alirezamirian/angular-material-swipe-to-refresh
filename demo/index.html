@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mdeSwipeToRefreshDemo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <title>Angular Material Extensions - Swipe to refresh</title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.js"></script>
+
+    <script src="../dist/mde-swipe-to-refresh.js"></script>
+    <script src="demo.js"></script>
+
+
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.css">
+    <link rel="stylesheet" href="../dist/mde-swipe-to-refresh.css">
+
+    <style>
+        md-card{
+            min-height: 100px;
+            font-size: 100px;
+            text-align: center;
+            color: rgba(0,0,0,.2)!important;
+        }
+    </style>
+</head>
+<body ng-controller="MainController as ctrl">
+
+<div>
+    <md-content mde-swipe-to-refresh mde-on-refresh="ctrl.update()" mde-on-cancel="ctrl.cancel()">
+        <md-card md-colors="item.color" class="md-padding" ng-repeat="item in ctrl.items track by $index">
+            {{ctrl.items.length - $index}}
+        </md-card>
+    </md-content>
+</div>
+</body>
+</html>

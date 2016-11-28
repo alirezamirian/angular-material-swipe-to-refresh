@@ -1,0 +1,202 @@
+/*
+ * mde-swipe-to-refresh-demo 0.0.0
+ * 
+ * 
+*/
+
+
+
+(function(angular){
+    "use strict";
+    angular.module("mde.swipeToRefresh", [])
+        .constant("mdeSwipeToRefreshConfig", {
+            threshold: 85
+        });
+
+})(angular);
+(function(angular){
+	"use strict";
+	mdeSwipeToRefreshDirective.$inject = ["$q", "$timeout", "mdeSwipeToRefreshConfig"];
+        angular.module("mde.swipeToRefresh")
+		.directive("mdeSwipeToRefresh", mdeSwipeToRefreshDirective);
+
+
+	var State = {
+		None: "None",
+		Updating: "Updating",
+		Pulling: "Pulling"
+	};
+	function mdeSwipeToRefreshDirective($q, $timeout, mdeSwipeToRefreshConfig){
+		return{
+			restrict: "A",
+            require: "?^mdeSwipeToRefreshScrollHost",
+			transclude: true,
+			scope:{
+                mdeOnRefresh: "&?",
+                mdeOnCancel: "&?",
+                mdeScrollHostSelector: "@?",
+                mdeThreshold: "=?"
+			},
+			templateUrl: "swipe-to-refresh/swipe-to-refresh.html",
+			link: linkFn
+		};
+
+		function linkFn(scope, elem, attrs, mdeSwipeToRefreshScrollHost){
+			elem.bind("touchstart", touchStart);
+			var scrollHost, startY;
+			if(mdeSwipeToRefreshScrollHost){
+                scrollHost = mdeSwipeToRefreshScrollHost.getElement();
+            }
+            else if(scope.mdeScrollHostSelector){
+			    var el = elem.parent();
+			    while( el[0] != document.body){
+                    el = el.parent();
+                    if(el[0].matches(scope.mdeScrollHostSelector)){
+                        scrollHost = el;
+                        break;
+                    }
+                }
+                // if mdeScrollHostSelector doesn't matches anything, fallback to body
+                scrollHost = scrollHost || el;
+            }
+            else{
+                // default to body
+                scrollHost = angular.element(document.body);
+            }
+            scope.mdeThreshold = scope.mdeThreshold || mdeSwipeToRefreshConfig.threshold;
+
+            scope.State = State;
+            scope.progress = 0;
+            scope.state = State.None;
+
+
+            function touchStart(event){
+                if(scope.state != State.None){
+                    return;
+                }
+                scope.$apply(function(){
+                	scope.progress = 0;
+                	scope.movement = 0;
+                	$timeout(function (){
+                        scope.state = State.Pulling;
+                    })
+				});
+                startY = event.touches[0].pageY;
+                elem.one("touchend", touchEnd);
+                elem.bind("touchmove", touchMove);
+            }
+
+            function touchMove(event) {
+                if(scrollHost[0].scrollTop > 0){
+                    return;
+                }
+                var movement = event.touches[0].pageY - startY;
+
+                if(movement > 0){
+                    scope.$apply(function(){
+                    	scope.movement = Math.min(movement, 15 * Math.log(movement));
+                        scope.progress = Math.min( movement/scope.mdeThreshold, 1);
+                        // console.log(movement, "=>", scope.movement);
+
+                        if(scope.progress > 0){
+                            event.preventDefault();
+                        }
+                    });
+				}
+
+
+            }
+            function touchEnd(event){
+                elem.unbind("touchmove", touchMove);
+                scope.$apply(function(){
+                	if(scope.progress == 1){
+                        scope.state = State.Updating;
+                        scope.movement = 60;
+                        $q.when((scope.mdeOnRefresh || angular.noop)()).finally(function(){
+                            scope.state = State.None;
+                        })
+                    }
+                    else{
+                        (scope.mdeOnCancel || angular.noop)();
+                        scope.movement = 0;
+                        $timeout(function(){
+                            scope.state = State.None;
+                        },100);
+					}
+                });
+            }
+		}
+	}
+})(angular);
+
+
+(function(angular){
+    "use strict";
+    angular.module('mde.swipeToRefresh')
+        .directive('mdeSwipeToRefreshScrollHost', mdeSwipeToRefreshScrollHostDirective);
+
+    function mdeSwipeToRefreshScrollHostDirective(){
+        MdeSwipeToRefreshScrollHost.$inject = ["$element"];
+        return {
+            restrict: "A",
+            controller: MdeSwipeToRefreshScrollHost
+        };
+
+        function MdeSwipeToRefreshScrollHost($element){
+            this.getElement = getElement;
+
+            function getElement(){
+                return $element;
+            }
+        }
+    }
+
+})(angular);
+
+
+
+// source: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
+if (!Element.prototype.matches) {
+    Element.prototype.matches =
+        Element.prototype.matchesSelector ||
+        Element.prototype.mozMatchesSelector ||
+        Element.prototype.msMatchesSelector ||
+        Element.prototype.oMatchesSelector ||
+        Element.prototype.webkitMatchesSelector ||
+        function(s) {
+            var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                i = matches.length;
+            while (--i >= 0 && matches.item(i) !== this) {}
+            return i > -1;
+        };
+}
+
+(function(module) {
+try {
+  module = angular.module('mde.swipeToRefresh');
+} catch (e) {
+  module = angular.module('mde.swipeToRefresh', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('swipe-to-refresh/swipe-to-refresh.html',
+    '<div\n' +
+    '     class="_indicator-wrap" layout="column" layout-align="center center"\n' +
+    '     ng-style="{top: -40 + movement + \'px\'}">\n' +
+    '    <span class="md-whiteframe-2dp _indicator" ng-if="state == State.Pulling">\n' +
+    '        <md-progress-circular\n' +
+    '                md-diameter="20" value="{{progress*80}}"\n' +
+    '                ng-style="{transform: \'rotate(\' + movement*1.8 + \'deg)\', opacity: progress == 1 ? 1 : .4}">\n' +
+    '        </md-progress-circular>\n' +
+    '    </span>\n' +
+    '    <!--\n' +
+    '    We use ng-show because ng-if will destroy md-progress-circular scope and it will no longer spin while it\'s\n' +
+    '    fading out. It event don\'t freezes in it\'s last state.\n' +
+    '    -->\n' +
+    '    <span class="md-whiteframe-2dp _indicator _updating" ng-show="state == State.Updating">\n' +
+    '        <md-progress-circular md-diameter="20" md-mode="indeterminate"></md-progress-circular>\n' +
+    '    </span>\n' +
+    '</div>\n' +
+    '<div ng-transclude></div>\n' +
+    '');
+}]);
+})();

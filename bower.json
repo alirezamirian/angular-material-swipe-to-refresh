@@ -1,0 +1,24 @@
+{
+  "name": "mde-swipe-to-refresh",
+  "version": "0.0.9",
+  "description": "Swipe to refresh (pull to refresh) for Angular Mateial",
+  "main": [
+    "./dist/mde-swipe-to-refresh.min.js",
+    "./dist/mde-swipe-to-refresh.min.css"
+  ],
+  "repository": "https://github.com/alirezamirian/angular-material-swipe-to-refresh",
+  "ignore": [
+    "*",
+    "!dist/*"
+  ],
+  "keywords": [
+    "Swipe to refresh",
+    "Pull to refresh",
+    "angular",
+    "angular material",
+    "Angular Material Extensions"
+  ],
+  "dependencies": {
+    "angular-material": ">=1.0.0"
+  }
+}

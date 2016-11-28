@@ -6,6 +6,6 @@ for [Angular Material](https://material.angularjs.org).
 
 ## TODO
 - [ ] Add docs
-- [ ] Add more demo
+- [ ] Improve demo
 - [ ] fix bug when scroll host is not correctly set
 - [ ] add arrow according to spec

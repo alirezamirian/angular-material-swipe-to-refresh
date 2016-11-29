@@ -203,7 +203,7 @@ module.run(['$templateCache', function($templateCache) {
     '    fading out. It event don\'t freezes in it\'s last state.\n' +
     '    -->\n' +
     '    <span class="md-whiteframe-2dp _indicator _updating" ng-show="state == State.Updating">\n' +
-    '        <md-progress-circular md-diameter="20" md-mode="indeterminate"></md-progress-circular>\n' +
+    '        <md-progress-circular md-diameter="21" md-mode="indeterminate"></md-progress-circular>\n' +
     '    </span>\n' +
     '</div>\n' +
     '<div ng-transclude></div>\n' +

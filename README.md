@@ -2,7 +2,11 @@
 Implementation of [material design swipe to refresh](https://material.google.com/patterns/swipe-to-refresh.html#swipe-to-refresh-positioning)
 for [Angular Material](https://material.angularjs.org).
 
-![mde-swipe-to-refresh](https://cloud.githubusercontent.com/assets/3150694/20712903/7116dc4c-b65b-11e6-84d7-4a518c6def61.gif)
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/3150694/20712903/7116dc4c-b65b-11e6-84d7-4a518c6def61.gif" align="center"
+alt="swipe to refresh">
+</p>
 
 ## Dependencies
 - Angular Material

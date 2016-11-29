@@ -94,16 +94,27 @@ function buildJs(){
         }))
         .pipe(gulp.dest(distPath))
         .pipe($.uglify())
+        .pipe($.banner(banner,{
+            pkg: pkg
+        }))
         .pipe($.rename({suffix: ".min"}))
         .pipe(gulp.dest(distPath));
 }
 function buildCss(){
+    delete require.cache["./bower.json"];
+    var pkg = require("./bower.json");
     gulp.src(srcPath + "/**/*.scss")
         .pipe($.plumber())
         .pipe($.sass())
         .pipe($.concatCss(outputName + ".css"))
+        .pipe($.banner(banner,{
+            pkg: pkg
+        }))
         .pipe(gulp.dest(distPath))
         .pipe($.minifyCss())
+        .pipe($.banner(banner,{
+            pkg: pkg
+        }))
         .pipe($.rename({suffix: '.min'}))
         .pipe(gulp.dest(distPath));
 }

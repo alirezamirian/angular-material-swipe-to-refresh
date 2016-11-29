@@ -57,16 +57,16 @@
                 if(scope.state != State.None){
                     return;
                 }
-                scope.$apply(function(){
-                	scope.progress = 0;
-                	scope.movement = 0;
-                	$timeout(function (){
-                        scope.state = State.Pulling;
-                    })
-				});
                 startY = event.touches[0].pageY;
                 elem.one("touchend", touchEnd);
                 elem.bind("touchmove", touchMove);
+
+                if(scrollHost[0].scrollTop == 0){
+                    scope.$apply(function(){
+                        scope.progress = 0;
+                        scope.movement = 0;
+                    });
+                }
             }
 
             function touchMove(event) {
@@ -75,15 +75,22 @@
                 }
                 var movement = event.touches[0].pageY - startY;
 
+                if(movement > 0 && scope.state != State.Pulling){
+                    $timeout(function (){
+                        scope.state = State.Pulling;
+                    })
+                }
+
+                if(scope.state == State.Pulling){
+                    event.preventDefault();
+                }
+
+
                 if(movement > 0){
                     scope.$apply(function(){
                     	scope.movement = Math.min(movement, 15 * Math.log(movement));
                         scope.progress = Math.min( movement/scope.mdeThreshold, 1);
                         // console.log(movement, "=>", scope.movement);
-
-                        if(scope.progress > 0){
-                            event.preventDefault();
-                        }
                     });
 				}
 
@@ -100,8 +107,10 @@
                         })
                     }
                     else{
-                        (scope.mdeOnCancel || angular.noop)();
-                        scope.movement = 0;
+                        if(scope.movement > 0){
+                            (scope.mdeOnCancel || angular.noop)();
+                            scope.movement = 0;
+                        }
                         $timeout(function(){
                             scope.state = State.None;
                         },100);

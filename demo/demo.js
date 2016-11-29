@@ -23,7 +23,7 @@
 
 
         function cancel(){
-            $mdToast.showSimple("Swipe to refresh was canceled");
+            // $mdToast.showSimple("Swipe to refresh was canceled");
         }
         function update(){
             return $timeout(1200).then(function(){

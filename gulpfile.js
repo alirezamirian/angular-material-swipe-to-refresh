@@ -40,9 +40,13 @@ function bumpVersion(type){
             repository = repo;
             return repo.getStatus();
         }).then(function(status){
-            /*if(status.length>0){
+            if(status.filter(isInDist).length>0){
                 throw new Error("Working directory is no clean! Please first commit your changes and try again");
-            }*/
+            }
+            function isInDist(status){
+                return status.path().indexOf(distPath) != 0;
+            }
+
         }).then(function(){
             gulp.src(['bower.json', 'package.json'])
                 .pipe($.bump({type: type}))

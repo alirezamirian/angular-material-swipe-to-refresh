@@ -92,3 +92,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+.idea/angular-material-swipe-to-refresh.iml
+.idea/encodings.xml
+.idea/modules.xml

@@ -2,6 +2,8 @@
 Implementation of [material design swipe to refresh](https://material.google.com/patterns/swipe-to-refresh.html#swipe-to-refresh-positioning)
 for [Angular Material](https://material.angularjs.org).
 
+![mde-swipe-to-refresh](https://cloud.githubusercontent.com/assets/3150694/20712903/7116dc4c-b65b-11e6-84d7-4a518c6def61.gif)
+
 ## Dependencies
 - Angular Material
 
@@ -17,14 +19,14 @@ angular.module("yourApp", ['mde-swipeToRefresh'])
 ```html
 <div mde-swipe-to-refresh mde-on-refresh="ctrl.refresh()"></any>
 ```
-By default scrolling element is assumed to be body. If it's not the case, you can specify it with one of the following
+By default scrolling element is assumed to be `body`. If it's not the case, you can specify it with one of the following
 ways:
 
 - `mde-scroll-host-selector` attribute:
 ```html
 <div mde-swipe-to-refresh mde-scroll-host-selector=".container"></any>
 ```
-It will look up the ancestors for an element that matches the selector.
+It will look up for the first ancestor that matches the selector.
 
 - `mde-swipe-to-refresh-scroll-host` directive:
 ```html

@@ -1,0 +1,7 @@
+{
+  "name": "angular-material-swipe-to-refresh-demo",
+  "version": "0.0.1",
+  "dependencies": {
+    "gulp-connect": "^5.0.0"
+  }
+}

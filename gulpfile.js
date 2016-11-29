@@ -5,7 +5,7 @@ var $ = require("gulp-load-plugins")();
 var ngHtml2Js = require("gulp-ng-html2js"); // don't know why it's not captured by gulp-load-plugins!
 var runSequence = require('gulp-run-sequence');
 
-var pkg = require("./demo/bower.json");
+var pkg = require("./bower.json");
 var streamqueue = require('streamqueue');
 
 var srcPath = "src";

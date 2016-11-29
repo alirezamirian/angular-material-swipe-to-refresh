@@ -9,6 +9,7 @@
 		Updating: "Updating",
 		Pulling: "Pulling"
 	};
+	var SLOWING_FACTOR = .7;
 	function mdeSwipeToRefreshDirective($q, $timeout, mdeSwipeToRefreshConfig){
 		return{
 			restrict: "A",
@@ -88,7 +89,7 @@
 
                 if(movement > 0){
                     scope.$apply(function(){
-                    	scope.movement = Math.min(movement, 15 * Math.log(movement));
+                    	scope.movement = Math.min(movement * SLOWING_FACTOR, 15 * Math.log(movement));
                         scope.progress = Math.min( movement/scope.mdeThreshold, 1);
                         // console.log(movement, "=>", scope.movement);
                     });

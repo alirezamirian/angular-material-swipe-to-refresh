@@ -1,11 +1,11 @@
 
 var gulp = require("gulp");
+var git = require("simple-git");
 var Git = require("nodegit");
 var $ = require("gulp-load-plugins")();
 var ngHtml2Js = require("gulp-ng-html2js"); // don't know why it's not captured by gulp-load-plugins!
 var runSequence = require('gulp-run-sequence');
 
-var pkg = require("./bower.json");
 var streamqueue = require('streamqueue');
 
 var srcPath = "src";
@@ -35,29 +35,44 @@ function watch(){
 
 function bumpVersion(type){
     return function(){
+        var repository;
         Git.Repository.open(".").then(function(repo){
+            repository = repo;
             return repo.getStatus();
         }).then(function(status){
-            if(status.length>0){
+            /*if(status.length>0){
                 throw new Error("Working directory is no clean! Please first commit your changes and try again");
-            }
+            }*/
         }).then(function(){
-            runSequence("build", function(){
-                gulp.src(['bower.json', 'package.json'])
-                    .pipe($.bump({type:type}))
-                    .pipe(gulp.dest('./'))
-                    .pipe($.git.commit('chore(all): bump version'))
-                    .pipe($.filter('package.json'))
-                    .pipe($.tagVersion({prefix: ""}));
-            })
-
+            gulp.src(['bower.json', 'package.json'])
+                .pipe($.bump({type: type}))
+                .pipe(gulp.dest('./'))
+                .on('end', function() {
+                    runSequence("build", function(){
+                        git()
+                            .add('./*')
+                            .commit('chore(all): bump version', function(error){
+                            if(error){
+                                console.log("Changes not committed. Error: ", error)
+                            }
+                            else{
+                                gulp.src("package.json")
+                                    .pipe($.tagVersion({prefix: ""}))
+                            }
+                        });
+                    })
+                });
         }).catch(function(error){
             console.error("Error in bumping version: ", error.message)
         });
     }
 }
+gulp.task("test", function(){
 
+})
 function buildJs(){
+    delete require.cache["./bower.json"];
+    var pkg = require("./bower.json");
     return streamqueue(
         {
             objectMode: true

@@ -17,11 +17,20 @@ bower install mde-swipe-to-refresh --save
 ```
 
 ## Usage
+Add script and style:
+```html
+...
+<script src="bower_components/mde-swipe-to-refresh/dist/mde-swipe-to-refresh.min.js"></script>
+<link rel="stylesheet" href="bower_components/mde-swipe-to-refresh/dist/mde-swipe-to-refresh.min.css">
+...
+```
+Add module dependency:
 ```js
 angular.module("yourApp", ['mde-swipeToRefresh'])
 ```
+Use it:
 ```html
-<div mde-swipe-to-refresh mde-on-refresh="ctrl.refresh()"></any>
+<div mde-swipe-to-refresh mde-on-refresh="ctrl.refresh()"></div>
 ```
 By default scrolling element is assumed to be `body`. If it's not the case, you can specify it with one of the following
 ways:

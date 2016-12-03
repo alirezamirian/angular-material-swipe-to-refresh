@@ -60,7 +60,6 @@ Threshold in pixels. Defaults to `mdeSwipeToRefreshConfig.threshold`
 
 
 ## TODO
-- [ ] Add docs
 - [ ] Improve demo
 - [ ] fix bug when scroll host is not correctly set
 - [ ] add arrow according to spec

@@ -26,7 +26,7 @@ Add script and style:
 ```
 Add module dependency:
 ```js
-angular.module("yourApp", ['mde-swipeToRefresh'])
+angular.module("yourApp", ['mde.swipeToRefresh'])
 ```
 Use it:
 ```html

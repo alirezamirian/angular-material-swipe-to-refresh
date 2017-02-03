@@ -76,9 +76,9 @@
                 var movement = event.touches[0].pageY - startY;
 
                 if(movement > 0 && scope.state != State.Pulling){
-                    $timeout(function (){
-                        scope.state = State.Pulling;
-                    })
+                    startY = event.touches[0].pageY;
+                    movement = 0;
+                    scope.state = State.Pulling;
                 }
 
                 if(scope.state == State.Pulling){

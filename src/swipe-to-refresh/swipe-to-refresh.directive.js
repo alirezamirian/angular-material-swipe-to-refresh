@@ -63,10 +63,9 @@
                 elem.bind("touchmove", touchMove);
 
                 if(scrollHost[0].scrollTop == 0){
-                    scope.$apply(function(){
-                        scope.progress = 0;
-                        scope.movement = 0;
-                    });
+                    scope.progress = 0;
+                    scope.movement = 0;
+                    scope.$digest();
                 }
             }
 
@@ -86,19 +85,15 @@
                     event.preventDefault();
                 }
 
-
                 if(movement > 0){
-                    scope.$apply(function(){
-                    	scope.movement = Math.min(calculateMovement(movement, scope.mdeThreshold));
-                        scope.progress = Math.min( scope.movement/scope.mdeThreshold, 1);
-                        // console.log(movement, "=>", scope.movement);
-                    });
+                    scope.movement = Math.min(calculateMovement(movement, scope.mdeThreshold));
+                    scope.progress = Math.min( scope.movement/scope.mdeThreshold, 1);
+                    scope.$digest();
 				}
 				else if(scope.movement > 0){
-                    scope.$apply(function(){
-                        scope.movement = 0;
-                        scope.progress = 0;
-                    });
+                    scope.movement = 0;
+                    scope.progress = 0;
+                    scope.$digest();
                 }
 
 

@@ -106,12 +106,15 @@
                         scope.movement = scope.mdeThreshold;
                         $q.when((scope.mdeOnRefresh || angular.noop)()).finally(function(){
                             scope.state = State.None;
+                            scope.movement = 0;
+                            scope.progress = 0;
                         })
                     }
                     else{
                         if(scope.movement > 0){
                             (scope.mdeOnCancel || angular.noop)();
                             scope.movement = 0;
+                            scope.progress = 0;
                         }
                         $timeout(function(){
                             scope.state = State.None;

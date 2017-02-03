@@ -6,7 +6,7 @@
     "use strict";
     angular.module("mde.swipeToRefresh", [])
         .constant("mdeSwipeToRefreshConfig", {
-            threshold: 85
+            threshold: 80
         });
 
 })(angular);

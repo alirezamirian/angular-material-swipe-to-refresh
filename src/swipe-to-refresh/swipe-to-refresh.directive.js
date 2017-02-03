@@ -9,7 +9,7 @@
 		Updating: "Updating",
 		Pulling: "Pulling"
 	};
-	var SLOWING_FACTOR = .7;
+
 	function mdeSwipeToRefreshDirective($q, $timeout, mdeSwipeToRefreshConfig){
 		return{
 			restrict: "A",
@@ -89,11 +89,17 @@
 
                 if(movement > 0){
                     scope.$apply(function(){
-                    	scope.movement = Math.min(movement * SLOWING_FACTOR, 15 * Math.log(movement));
-                        scope.progress = Math.min( movement/scope.mdeThreshold, 1);
+                    	scope.movement = Math.min(calculateMovement(movement, scope.mdeThreshold));
+                        scope.progress = Math.min( scope.movement/scope.mdeThreshold, 1);
                         // console.log(movement, "=>", scope.movement);
                     });
 				}
+				else if(scope.movement > 0){
+                    scope.$apply(function(){
+                        scope.movement = 0;
+                        scope.progress = 0;
+                    });
+                }
 
 
             }
@@ -102,7 +108,7 @@
                 scope.$apply(function(){
                 	if(scope.progress == 1){
                         scope.state = State.Updating;
-                        scope.movement = 60;
+                        scope.movement = scope.mdeThreshold;
                         $q.when((scope.mdeOnRefresh || angular.noop)()).finally(function(){
                             scope.state = State.None;
                         })
@@ -120,4 +126,27 @@
             }
 		}
 	}
+    function calculateMovement(movement, activationThreshold) {
+        /*
+         These are observations on Nexus 5 for how pulling is calculated based on touch movement.
+         It seems there is kind of a logarithmic relation going on (as it also feels so).
+         Note that Pixels need to be divided by 3 to become comparable to web (assuming proper viewport tag exists)
+
+         touch movement(x)	=> 	pull (y)
+         72, 40
+         170, 100
+         240, 143
+         304, 180 => near threshold
+         448, 250
+         592, 310
+         745, 360
+         904, 395
+         1254, 430
+         * */
+        return 2 * activationThreshold * log10((movement + activationThreshold) / activationThreshold);
+    }
+    function log10(x){
+        return Math.log(x)/Math.LN10;
+        // we don't use Math.log10 as it's only available in ES6
+    }
 })(angular);

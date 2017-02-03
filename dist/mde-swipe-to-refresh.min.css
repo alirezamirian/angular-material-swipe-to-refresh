@@ -1,1 +1,7 @@
+/*
+ * mde-swipe-to-refresh 0.0.3
+ * Swipe to refresh (pull to refresh) for Angular Material
+ * https://github.com/alirezamirian/angular-material-swipe-to-refresh
+*/
+
 [mde-swipe-to-refresh]{position:relative}[mde-swipe-to-refresh] ._indicator-wrap{transition:top .1s;position:absolute;left:0;right:0}[mde-swipe-to-refresh] ._indicator{border-radius:50%;padding:10px;background:#fff}[mde-swipe-to-refresh] ._updating.ng-hide-add,[mde-swipe-to-refresh] ._updating.ng-hide-add-active{transition:transform .2s,opacity .2s}[mde-swipe-to-refresh] ._updating.ng-hide-add{display:block;opacity:1;transform:scale(1)}[mde-swipe-to-refresh] ._updating.ng-hide-add-active{opacity:0;transform:scale(0)}

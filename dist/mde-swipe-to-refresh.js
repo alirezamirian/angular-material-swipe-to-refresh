@@ -1,5 +1,5 @@
 /*
- * mde-swipe-to-refresh 0.0.2
+ * mde-swipe-to-refresh 0.0.3
  * Swipe to refresh (pull to refresh) for Angular Material
  * https://github.com/alirezamirian/angular-material-swipe-to-refresh
 */
@@ -10,7 +10,7 @@
     "use strict";
     angular.module("mde.swipeToRefresh", [])
         .constant("mdeSwipeToRefreshConfig", {
-            threshold: 85
+            threshold: 80
         });
 
 })(angular);
@@ -26,7 +26,7 @@
 		Updating: "Updating",
 		Pulling: "Pulling"
 	};
-	var SLOWING_FACTOR = .7;
+
 	function mdeSwipeToRefreshDirective($q, $timeout, mdeSwipeToRefreshConfig){
 		return{
 			restrict: "A",
@@ -80,10 +80,9 @@
                 elem.bind("touchmove", touchMove);
 
                 if(scrollHost[0].scrollTop == 0){
-                    scope.$apply(function(){
-                        scope.progress = 0;
-                        scope.movement = 0;
-                    });
+                    scope.progress = 0;
+                    scope.movement = 0;
+                    scope.$digest();
                 }
             }
 
@@ -94,23 +93,25 @@
                 var movement = event.touches[0].pageY - startY;
 
                 if(movement > 0 && scope.state != State.Pulling){
-                    $timeout(function (){
-                        scope.state = State.Pulling;
-                    })
+                    startY = event.touches[0].pageY;
+                    movement = 0;
+                    scope.state = State.Pulling;
                 }
 
                 if(scope.state == State.Pulling){
                     event.preventDefault();
                 }
 
-
                 if(movement > 0){
-                    scope.$apply(function(){
-                    	scope.movement = Math.min(movement * SLOWING_FACTOR, 15 * Math.log(movement));
-                        scope.progress = Math.min( movement/scope.mdeThreshold, 1);
-                        // console.log(movement, "=>", scope.movement);
-                    });
+                    scope.movement = Math.min(calculateMovement(movement, scope.mdeThreshold));
+                    scope.progress = Math.min( scope.movement/scope.mdeThreshold, 1);
+                    scope.$digest();
 				}
+				else if(scope.movement > 0){
+                    scope.movement = 0;
+                    scope.progress = 0;
+                    scope.$digest();
+                }
 
 
             }
@@ -119,15 +120,18 @@
                 scope.$apply(function(){
                 	if(scope.progress == 1){
                         scope.state = State.Updating;
-                        scope.movement = 60;
+                        scope.movement = scope.mdeThreshold;
                         $q.when((scope.mdeOnRefresh || angular.noop)()).finally(function(){
                             scope.state = State.None;
+                            scope.movement = 0;
+                            scope.progress = 0;
                         })
                     }
                     else{
                         if(scope.movement > 0){
                             (scope.mdeOnCancel || angular.noop)();
                             scope.movement = 0;
+                            scope.progress = 0;
                         }
                         $timeout(function(){
                             scope.state = State.None;
@@ -137,6 +141,14 @@
             }
 		}
 	}
+    function calculateMovement(movement, activationThreshold) {
+        
+        return 2 * activationThreshold * log10((movement + activationThreshold) / activationThreshold);
+    }
+    function log10(x){
+        return Math.log(x)/Math.LN10;
+        // we don't use Math.log10 as it's only available in ES6
+    }
 })(angular);
 
 
@@ -191,7 +203,7 @@ module.run(['$templateCache', function($templateCache) {
   $templateCache.put('swipe-to-refresh/swipe-to-refresh.html',
     '<div\n' +
     '     class="_indicator-wrap" layout="column" layout-align="center center"\n' +
-    '     ng-style="{top: -40 + movement + \'px\'}">\n' +
+    '     ng-style="{top: -50 + movement + \'px\'}">\n' +
     '    <span class="md-whiteframe-2dp _indicator" ng-if="state == State.Pulling">\n' +
     '        <md-progress-circular\n' +
     '                md-diameter="20" value="{{progress*80}}"\n' +

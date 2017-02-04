@@ -60,7 +60,7 @@ function bumpVersion(type){
                                 }
                                 else{
                                     gulp.src("package.json")
-                                        .pipe($.tagVersion({prefix: ""}))
+                                        .pipe($.tagVersion({prefix: "v"}))
                                 }
                             });
                     })
@@ -103,7 +103,7 @@ function buildJs(){
 }
 
 function changelog(){
-    var promise = spawn('node ./scripts/changelog.js', {cwd: dir});
+    var promise = spawn('node', ['./scripts/changelog.js']);
     promise.childProcess.stdout.pipe(process.stdout);
     promise.childProcess.stderr.pipe(process.stderr);
     return promise;

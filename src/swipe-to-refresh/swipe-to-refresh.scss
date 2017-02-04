@@ -5,6 +5,9 @@
     position: absolute;
     left: 0;
     right: 0;
+    // prevent going below next non-static element. it's required because ._indicator-wrap takes place
+    // before all children
+    z-index: 1;
   }
   ._indicator{
     border-radius: 50%;

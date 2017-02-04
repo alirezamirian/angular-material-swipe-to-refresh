@@ -1,10 +1,10 @@
 
 var gulp = require("gulp");
 var git = require("simple-git");
-var Git = require("nodegit");
 var $ = require("gulp-load-plugins")();
 var ngHtml2Js = require("gulp-ng-html2js"); // don't know why it's not captured by gulp-load-plugins!
 var runSequence = require('gulp-run-sequence');
+const spawn   = require('child-process-promise').spawn;
 
 var streamqueue = require('streamqueue');
 
@@ -21,6 +21,7 @@ var banner = '/*\n' +
 gulp.task("build", ["build-js", "build-css"]);
 gulp.task("watch", watch);
 gulp.task("build-js", buildJs);
+gulp.task("changelog", changelog);
 gulp.task("build-css", buildCss);
 gulp.task("bump-version-patch", bumpVersion("patch"));
 gulp.task("bump-version-minor", bumpVersion("minor"));
@@ -35,45 +36,45 @@ function watch(){
 
 function bumpVersion(type){
     return function(){
-        var repository;
-        Git.Repository.open(".").then(function(repo){
-            repository = repo;
-            return repo.getStatus();
-        }).then(function(status){
-            if(status.filter(isInDist).length>0){
-                throw new Error("Working directory is no clean! Please first commit your changes and try again");
+        git().status(function(error, statusSummary){
+            var dirtyFiles = statusSummary.files.filter(isInDist);
+            if(dirtyFiles.length>0){
+                console.error("Working directory is not clean! Please first commit your changes and try again.");
+                statusSummary.modified.length && console.warn("Modified", statusSummary.modified);
+                statusSummary.created.length && console.warn("Created", statusSummary.created);
+                statusSummary.not_added.length && console.warn("Not added", statusSummary.not_added);
+                statusSummary.renamed.length && console.warn("Renamed", statusSummary.renamed);
+                statusSummary.deleted.length && console.warn("Deleted", statusSummary.deleted);
+                return
             }
-            function isInDist(status){
-                return status.path().indexOf(distPath) != 0;
-            }
-
-        }).then(function(){
             gulp.src(['bower.json', 'package.json'])
                 .pipe($.bump({type: type}))
                 .pipe(gulp.dest('./'))
                 .on('end', function() {
-                    runSequence("build", function(){
+                    runSequence("build", "changelog", function(){
                         git()
                             .add('./*')
                             .commit('chore(all): bump version', function(error){
-                            if(error){
-                                console.log("Changes not committed. Error: ", error)
-                            }
-                            else{
-                                gulp.src("package.json")
-                                    .pipe($.tagVersion({prefix: ""}))
-                            }
-                        });
+                                if(error){
+                                    console.log("Changes not committed. Error: ", error)
+                                }
+                                else{
+                                    gulp.src("package.json")
+                                        .pipe($.tagVersion({prefix: ""}))
+                                }
+                            });
                     })
+                })
+                .on('error', function(error){
+                    console.error("Error in bumping version: ", error.message)
                 });
-        }).catch(function(error){
-            console.error("Error in bumping version: ", error.message)
-        });
+
+            function isInDist(file){
+                return file.path.indexOf(distPath) != 0;
+            }
+        })
     }
 }
-gulp.task("test", function(){
-
-})
 function buildJs(){
     delete require.cache["./bower.json"];
     var pkg = require("./bower.json");
@@ -99,6 +100,13 @@ function buildJs(){
         }))
         .pipe($.rename({suffix: ".min"}))
         .pipe(gulp.dest(distPath));
+}
+
+function changelog(){
+    var promise = spawn('node ./scripts/changelog.js', {cwd: dir});
+    promise.childProcess.stdout.pipe(process.stdout);
+    promise.childProcess.stderr.pipe(process.stderr);
+    return promise;
 }
 function buildCss(){
     delete require.cache["./bower.json"];

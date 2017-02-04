@@ -1,3 +1,13 @@
+<a name="0.0.4"></a>
+## [0.0.4](https://github.com/alirezamirian/angular-material-swipe-to-refresh/compare/v0.0.2...0.0.4) (2017-02-04)
+
+
+### Bug Fixes
+
+* fix z-index problem when non-static content exists ([77846a8](https://github.com/alirezamirian/angular-material-swipe-to-refresh/commit/77846a8))
+
+
+
 <a name="0.0.3"></a>
 ## [0.0.3](https://github.com/alirezamirian/angular-material-swipe-to-refresh/compare/v0.0.2...0.0.3) (2017-02-03)
 

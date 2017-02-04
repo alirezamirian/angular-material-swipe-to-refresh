@@ -1,5 +1,5 @@
 /*
- * mde-swipe-to-refresh 0.0.3
+ * mde-swipe-to-refresh 0.0.4
  * Swipe to refresh (pull to refresh) for Angular Material
  * https://github.com/alirezamirian/angular-material-swipe-to-refresh
 */

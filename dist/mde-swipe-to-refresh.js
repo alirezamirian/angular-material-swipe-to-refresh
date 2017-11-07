@@ -4,8 +4,6 @@
  * https://github.com/alirezamirian/angular-material-swipe-to-refresh
 */
 
-
-
 (function(angular){
     "use strict";
     angular.module("mde.swipeToRefresh", [])
@@ -42,6 +40,13 @@
 			link: linkFn
 		};
 
+        function getEvent(event) {
+            if (angular.isDefined(event.originalEvent)) {
+                return event.originalEvent;
+            }
+            return event;
+        }
+
 		function linkFn(scope, elem, attrs, mdeSwipeToRefreshScrollHost){
 			elem.bind("touchstart", touchStart);
 			var scrollHost, startY;
@@ -75,7 +80,7 @@
                 if(scope.state != State.None){
                     return;
                 }
-                startY = event.touches[0].pageY;
+                startY = getEvent(event).touches[0].pageY;
                 elem.one("touchend", touchEnd);
                 elem.bind("touchmove", touchMove);
 
@@ -90,10 +95,10 @@
                 if(scrollHost[0].scrollTop > 0){
                     return;
                 }
-                var movement = event.touches[0].pageY - startY;
+                var movement = getEvent(event).touches[0].pageY - startY;
 
                 if(movement > 0 && scope.state != State.Pulling){
-                    startY = event.touches[0].pageY;
+                    startY = getEvent(event).touches[0].pageY;
                     movement = 0;
                     scope.state = State.Pulling;
                 }
@@ -142,15 +147,13 @@
 		}
 	}
     function calculateMovement(movement, activationThreshold) {
-        
-        return 2 * activationThreshold * log10((movement + activationThreshold) / activationThreshold);
+                return 2 * activationThreshold * log10((movement + activationThreshold) / activationThreshold);
     }
     function log10(x){
         return Math.log(x)/Math.LN10;
         // we don't use Math.log10 as it's only available in ES6
     }
 })(angular);
-
 
 (function(angular){
     "use strict";
@@ -174,8 +177,6 @@
     }
 
 })(angular);
-
-
 
 // source: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 if (!Element.prototype.matches) {

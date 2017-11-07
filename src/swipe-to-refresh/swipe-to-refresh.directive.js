@@ -25,6 +25,13 @@
 			link: linkFn
 		};
 
+        function getEvent(event) {
+            if (angular.isDefined(event.originalEvent)) {
+                return event.originalEvent;
+            }
+            return event;
+        }
+
 		function linkFn(scope, elem, attrs, mdeSwipeToRefreshScrollHost){
 			elem.bind("touchstart", touchStart);
 			var scrollHost, startY;
@@ -58,7 +65,7 @@
                 if(scope.state != State.None){
                     return;
                 }
-                startY = event.originalEvent.touches[0].pageY;
+                startY = getEvent(event).touches[0].pageY;
                 elem.one("touchend", touchEnd);
                 elem.bind("touchmove", touchMove);
 
@@ -73,10 +80,10 @@
                 if(scrollHost[0].scrollTop > 0){
                     return;
                 }
-                var movement = event.originalEvent.touches[0].pageY - startY;
+                var movement = getEvent(event).touches[0].pageY - startY;
 
                 if(movement > 0 && scope.state != State.Pulling){
-                    startY = event.originalEvent.touches[0].pageY;
+                    startY = getEvent(event).touches[0].pageY;
                     movement = 0;
                     scope.state = State.Pulling;
                 }

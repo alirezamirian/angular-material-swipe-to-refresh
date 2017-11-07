@@ -58,7 +58,7 @@
                 if(scope.state != State.None){
                     return;
                 }
-                startY = event.touches[0].pageY;
+                startY = event.originalEvent.touches[0].pageY;
                 elem.one("touchend", touchEnd);
                 elem.bind("touchmove", touchMove);
 
@@ -73,10 +73,10 @@
                 if(scrollHost[0].scrollTop > 0){
                     return;
                 }
-                var movement = event.touches[0].pageY - startY;
+                var movement = event.originalEvent.touches[0].pageY - startY;
 
                 if(movement > 0 && scope.state != State.Pulling){
-                    startY = event.touches[0].pageY;
+                    startY = event.originalEvent.touches[0].pageY;
                     movement = 0;
                     scope.state = State.Pulling;
                 }

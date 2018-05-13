@@ -2,7 +2,7 @@
   "name": "mde-swipe-to-refresh",
   "version": "0.0.4",
   "description": "Swipe to refresh (pull to refresh) for Angular Material",
-  "main": "gulpfile.js",
+  "main": "index.js",
   "scripts": {
     "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
